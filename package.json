@@ -1,0 +1,26 @@
+{
+  "name": "mediathek-ws",
+  "version": "0.1.0",
+  "description": "Mediathek Webservice. Directories information is stored into index",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "ospec"
+  },
+  "keywords": [
+    "mediathek",
+    "webservice",
+    "download",
+    "file"
+  ],
+  "author": "nheise",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "shortid": "^2.2.13"
+  },
+  "devDependencies": {
+    "ospec": "^3.0.1"
+  },
+  "repository": "nheise/mediathek_ws"
+}

@@ -1,41 +1,65 @@
 const fs = require('fs')
 const path = require('path')
 const { documentRoot } = require('./settings')
-
-let index = {}
-
-
-function reIndex() {
-  index = {}
-  // doIfDirectory( path.resolve( documentRoot ), readPath )
-  // readDir( documentRoot )
-  readStats( path.resolve( documentRoot ) )
+const documentRootAbsolutePath = path.resolve( documentRoot )
+const type = {
+  FILE: 'FILE',
+  DIRECTORY: 'DIRECTORY'
 }
 
-function readStats( directoryEntry ) {
-  fs.stat( directoryEntry, (error, stats) => {
+const directoryIndex = {}
+directoryIndex.index = {}
+
+function createIndexEntry( name, path, absolutePath ) {
+  return {
+    name: name,
+    path: path,
+    absolutePath: absolutePath,
+    subEntrys: [],
+    addFileStats: function(stats) {
+      this.size = stats.size
+      this.type = type.FILE
+    },
+    addDirectoryStats: function(stats) {
+      this.type = type.DIRECTORY
+    }
+  }
+}
+
+directoryIndex.reIndex = function reIndex() {
+  directoryIndex.index = {}
+  directoryIndex.index[''] = createIndexEntry( '', '', documentRootAbsolutePath )
+  directoryIndex.index[''].type = type.DIRECTORY
+
+  readDirectory( directoryIndex.index[''] )
+}
+
+function readStats( indexEntry ) {
+  fs.stat( indexEntry.absolutePath, (error, stats) => {
     if( stats.isDirectory() ){
-      console.log( 'isDirectory' )
-      console.log( '->' + directoryEntry )
-      console.log( '->' + path.relative( documentRoot, directoryEntry ) )
-      readDir( directoryEntry )
+      indexEntry.addDirectoryStats( stats )
+      readDirectory( indexEntry )
     }
     else if( stats.isFile() ) {
-      console.log( 'isFile' )
-      console.log( '->' + directoryEntry )
-      console.log( '->' + path.relative( documentRoot, directoryEntry ) )
+      indexEntry.addFileStats( stats )
     }
   })
 }
 
-function readDir( directory ) {
-  fs.readdir( directory, (error, directoryEntrys) => {
+function readDirectory( indexEntry ) {
+  fs.readdir( indexEntry.absolutePath, (error, directoryEntrys) => {
     directoryEntrys.forEach( directoryEntry => {
-      readStats( path.resolve( directory, directoryEntry ) )
+      const absolutePathToDocumentRoot = path.resolve( indexEntry.absolutePath, directoryEntry )
+      const relativePathToDocumentRoot = path.relative( documentRootAbsolutePath, absolutePathToDocumentRoot )
+      
+      const subIndexEntry = createIndexEntry( directoryEntry, relativePathToDocumentRoot, absolutePathToDocumentRoot )
+      
+      indexEntry.subEntrys.push( subIndexEntry )
+      directoryIndex.index[relativePathToDocumentRoot] = subIndexEntry
+      
+      readStats( subIndexEntry )
     })
   })
 }
 
-module.exports = {
-  reIndex: reIndex
-}
+module.exports = directoryIndex

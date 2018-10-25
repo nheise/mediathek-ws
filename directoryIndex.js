@@ -7,27 +7,32 @@ let index = {}
 
 function reIndex() {
   index = {}
-  doIfDirectory( path.resolve( documentRoot ), readPath )
+  // doIfDirectory( path.resolve( documentRoot ), readPath )
+  // readDir( documentRoot )
+  readStats( path.resolve( documentRoot ) )
 }
 
-function readPath( error, directory ) {
-      //const pathIndex = []
-      console.log( directory )
-      fs.readdir( directory, (error, files) => {
-        files.forEach( file => {
-          const subDir = path.resolve( directory, file )
-          console.log( '->' + subDir )
-          doIfDirectory( subDir, readPath )
-        })
-      })
-      console.log('###')
-}
-
-function doIfDirectory( directory, callback ) {
-  fs.stat( directory, (error, stats) => {
+function readStats( directoryEntry ) {
+  fs.stat( directoryEntry, (error, stats) => {
     if( stats.isDirectory() ){
-      callback( error, directory )
+      console.log( 'isDirectory' )
+      console.log( '->' + directoryEntry )
+      console.log( '->' + path.relative( documentRoot, directoryEntry ) )
+      readDir( directoryEntry )
     }
+    else if( stats.isFile() ) {
+      console.log( 'isFile' )
+      console.log( '->' + directoryEntry )
+      console.log( '->' + path.relative( documentRoot, directoryEntry ) )
+    }
+  })
+}
+
+function readDir( directory ) {
+  fs.readdir( directory, (error, directoryEntrys) => {
+    directoryEntrys.forEach( directoryEntry => {
+      readStats( path.resolve( directory, directoryEntry ) )
+    })
   })
 }
 

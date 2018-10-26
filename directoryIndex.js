@@ -7,8 +7,11 @@ const type = {
   DIRECTORY: 'DIRECTORY'
 }
 
-const directoryIndex = {}
-directoryIndex.index = {}
+let index = {}
+
+function getIndexEntryForPath( path ) {
+  return index[ path ]
+}
 
 function createIndexEntry( name, path, absolutePath ) {
   return {
@@ -27,12 +30,15 @@ function createIndexEntry( name, path, absolutePath ) {
   }
 }
 
-directoryIndex.reIndex = function reIndex() {
-  directoryIndex.index = {}
-  directoryIndex.index[''] = createIndexEntry( '', '', documentRootAbsolutePath )
-  directoryIndex.index[''].type = type.DIRECTORY
+function reIndex() {
+  index = {}
+  
+  const rootIndexEntry = createIndexEntry( '', '', documentRootAbsolutePath )
+  rootIndexEntry.type = type.DIRECTORY
+  
+  index[''] = rootIndexEntry
 
-  readDirectory( directoryIndex.index[''] )
+  readDirectory( rootIndexEntry )
 }
 
 function readStats( indexEntry ) {
@@ -57,11 +63,16 @@ function readDirectory( indexEntry ) {
       
       indexEntry.subEntrys.push( subIndexEntry )
       subIndexEntry.parent = indexEntry
-      directoryIndex.index[relativePathToDocumentRoot] = subIndexEntry
+      index[relativePathToDocumentRoot] = subIndexEntry
       
       readStats( subIndexEntry )
     })
   })
 }
 
-module.exports = directoryIndex
+module.exports = {
+  getIndexEntryForPath: getIndexEntryForPath,
+  reIndex: reIndex,
+  size: () => Object.keys(index).length,
+  entryType: type
+}

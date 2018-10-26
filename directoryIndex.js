@@ -15,6 +15,7 @@ function createIndexEntry( name, path, absolutePath ) {
     name: name,
     path: path,
     absolutePath: absolutePath,
+    parent: null,
     subEntrys: [],
     addFileStats: function(stats) {
       this.size = stats.size
@@ -55,6 +56,7 @@ function readDirectory( indexEntry ) {
       const subIndexEntry = createIndexEntry( directoryEntry, relativePathToDocumentRoot, absolutePathToDocumentRoot )
       
       indexEntry.subEntrys.push( subIndexEntry )
+      subIndexEntry.parent = indexEntry
       directoryIndex.index[relativePathToDocumentRoot] = subIndexEntry
       
       readStats( subIndexEntry )

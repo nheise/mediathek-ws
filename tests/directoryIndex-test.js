@@ -20,11 +20,13 @@ o.spec('directoryIndex', function () {
         const dir1Entry = directoryIndex.index['dir1']
         o( dir1Entry.type ).equals( 'DIRECTORY' )
         o( dir1Entry.subEntrys.length ).equals( 2 )
+        o( dir1Entry.parent.name ).equals( '' )
         
         const file11Entry = directoryIndex.index['dir1/dir11/file11']
         o( file11Entry.type ).equals( 'FILE' )
         o( file11Entry.subEntrys.length ).equals( 0 )
         o( file11Entry.size ).equals( 0 )
+        o( file11Entry.parent.name ).equals( 'dir11' )
 
         clearInterval( interval )
         done()

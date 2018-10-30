@@ -32,10 +32,12 @@ function depthCheckBuilder( maxDepth ) {
 
 function mapToResourceBuilder( preDepthChecker ) {
   return function mapEntry( indexEntry ) {
+    console.log(indexEntry)
     return {
       name: indexEntry.name,
       path: indexEntry.path,
       type: indexEntry.type,
+      size: indexEntry.size,
       subEntries: indexEntry.subEntries.map( preDepthChecker.next( mapEntry ) ),
       links: { 
         self: `http://localhost:3000/directories/${indexEntry.path}`,

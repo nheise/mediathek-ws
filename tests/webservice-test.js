@@ -38,6 +38,7 @@ o.spec('webservice', function () {
               o( indexEntry.subEntries.length ).equals( 2 )
               o( indexEntry.subEntries[0].name ).equals( 'dir11' )
               o( indexEntry.subEntries[0].subEntries.length ).equals( 0 )
+              console.log( indexEntry.subEntries )
             });
             res.on('end', () => {
                 done();

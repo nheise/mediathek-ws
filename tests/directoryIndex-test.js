@@ -25,7 +25,7 @@ o.spec('directoryIndex', function () {
         o( file11Entry.name ).equals( 'file11' )
         o( file11Entry.type ).equals( directoryIndex.entryType.FILE )
         o( file11Entry.subEntries.length ).equals( 0 )
-        o( file11Entry.size ).equals( 0 )
+        o( file11Entry.size ).equals( 10 )
         o( file11Entry.parent.name ).equals( 'dir11' )
 
         clearInterval( interval )

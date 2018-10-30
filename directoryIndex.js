@@ -18,6 +18,8 @@ function createIndexEntry( name, path, absolutePath ) {
     name: name,
     path: path,
     absolutePath: absolutePath,
+    size: null,
+    type: null,
     parent: null,
     subEntries: [],
     addFileStats: function(stats) {

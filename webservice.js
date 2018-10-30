@@ -1,5 +1,6 @@
 const express = require('express')
 const directoryIndex = require('./directoryIndex')
+const settings = require('./settings')
 const app = express()
 
 const nothing = () => {}
@@ -16,6 +17,8 @@ app.get('/directories/:key', function (req, res) {
         res.status(404).json( { error: { code: 404, text: `Directory ${req.params.key} not found.`} } )
     }
 })
+
+app.use('/files', express.static(settings.documentRoot) )
 
 function depthCheckBuilder( maxDepth ) {
   let depth = -1

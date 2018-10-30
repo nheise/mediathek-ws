@@ -46,5 +46,45 @@ o.spec('webservice', function () {
 
         req.end()
     })
+    
+    o("GET /files", function (done) {
+        
+        const options = { hostname: 'localhost', port: PORT, path: '/mediathek/files/dir1/file1', method: 'GET' };
+
+        const req = http.request(options, (res) => {
+            o(res.statusCode).equals(200)
+            o(res.headers["content-type"]).equals("application/octet-stream")
+
+            res.on('data', (chunk) => {
+              o( chunk.toString('utf-8') ).equals( 'Hallo' )
+            });
+            res.on('end', () => {
+                done();
+            })
+        })
+
+        req.end()
+    })
+
+    o("GET /files range request", function (done) {
+        
+        const options = { hostname: 'localhost', port: PORT, path: '/mediathek/files/dir1/file1', method: 'GET',
+            headers: { range: 'bytes=3-' }
+        };
+
+        const req = http.request(options, (res) => {
+            o(res.statusCode).equals(206)
+            o(res.headers["content-type"]).equals("application/octet-stream")
+            
+            res.on('data', (chunk) => {
+              o( chunk.toString('utf-8') ).equals( 'lo' )
+            });
+            res.on('end', () => {
+                done();
+            })
+        })
+
+        req.end()
+    })
 
 })

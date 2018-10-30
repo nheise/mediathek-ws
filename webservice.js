@@ -17,40 +17,18 @@ app.get('/directories/:key', function (req, res) {
     }
 })
 
-function mapResourceWithDepthCheck( maxDepth,  depth = 0 ) {
-  if( depth < maxDepth ) {
-    const goDown = depth + 1
-    return ( indexEntry ) => {
-      return {
-        name: indexEntry.name,
-        path: indexEntry.path,
-        type: indexEntry.type,
-        subEntries: indexEntry.subEntries.map( mapResourceWithDepthCheck( maxDepth, goDown ) ),
-        links: { 
-          self: `http://localhost:3000/directories/${indexEntry.path}`,
-          parent: `http://localhost:3000/directories/${indexEntry.parent.path}`
-        }
-      }
-    }
-  } else {
-    return nothing
-  }
-}
-
 function depthCheckBuilder( maxDepth ) {
-  const depth = 0
+  let depth = -1
   return {
     next: ( mapper ) => {
-      console.log(depth)
-      console.log( mapper )
-      return depth++ < maxDepth ? mapper : nothing
+      depth++
+      return depth < maxDepth ? mapper : nothing
     }
   }
 }
 
 function mapToResourceBuilder( preDepthChecker ) {
   return function mapEntry( indexEntry ) {
-    console.log( mapEntry )
     return {
       name: indexEntry.name,
       path: indexEntry.path,

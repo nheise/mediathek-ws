@@ -35,6 +35,9 @@ o.spec('webservice', function () {
               o( indexEntry.type ).equals( 'DIRECTORY' )
               o( indexEntry.links.self ).equals( 'http://localhost:3000/directories/dir1' )
               o( indexEntry.links.parent ).equals( 'http://localhost:3000/directories/' )
+              o( indexEntry.subEntries.length ).equals( 2 )
+              console.log( indexEntry.subEntries )
+              o( indexEntry.subEntries[0].name ).equals( 'dir11' )
             });
             res.on('end', () => {
                 done();
